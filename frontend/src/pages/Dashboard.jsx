@@ -33,7 +33,7 @@ export default function Dashboard() {
     }).finally(() => setLoading(false))
   }, [])
 
-  if (loading) return <LoadingSpinner text="Loading dashboard... (may take ~15s on first load)" />
+  if (loading) return <LoadingSpinner size="lg" longWait />
 
   if (error) return (
     <div className="flex flex-col items-center justify-center min-h-[60vh] text-center gap-6">
