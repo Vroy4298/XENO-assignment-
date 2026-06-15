@@ -9,6 +9,7 @@ export default function Dashboard() {
   const navigate = useNavigate()
   const [data, setData] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
 
   useEffect(() => {
     Promise.all([
@@ -26,10 +27,22 @@ export default function Dashboard() {
         totalSent,
         deliveryRate: totalSent > 0 ? Math.round((totalDelivered / totalSent) * 100) : 0,
       })
-    }).catch(console.error).finally(() => setLoading(false))
+    }).catch((err) => {
+      console.error(err)
+      setError('Backend is waking up — Render free tier spins down after inactivity. Please wait a moment and try again.')
+    }).finally(() => setLoading(false))
   }, [])
 
-  if (loading) return <LoadingSpinner text="Loading dashboard..." />
+  if (loading) return <LoadingSpinner text="Loading dashboard... (may take ~15s on first load)" />
+
+  if (error) return (
+    <div className="flex flex-col items-center justify-center min-h-[60vh] text-center gap-6">
+      <p className="text-4xl">⚡</p>
+      <h2 className="font-serif text-2xl text-white tracking-wide">Backend Waking Up</h2>
+      <p className="text-slate-400 text-sm max-w-sm leading-relaxed">{error}</p>
+      <button className="btn-primary" onClick={() => { setError(null); setLoading(true); Promise.all([api.get('/api/customers'), api.get('/api/campaigns'), api.get('/api/segments')]).then(([cRes, campRes, segRes]) => { const campaigns = campRes.data.campaigns; const totalSent = campaigns.reduce((s, c) => s + (c.stats?.sent || 0), 0); const totalDelivered = campaigns.reduce((s, c) => s + (c.stats?.delivered || 0), 0); setData({ customers: cRes.data.total, campaigns, segments: segRes.data.segments.length, totalSent, deliveryRate: totalSent > 0 ? Math.round((totalDelivered / totalSent) * 100) : 0 }); }).catch((err) => { setError('Still loading. Please retry in a few seconds.'); }).finally(() => setLoading(false)); }}>Retry</button>
+    </div>
+  )
 
   return (
     <div className="page-enter space-y-10">

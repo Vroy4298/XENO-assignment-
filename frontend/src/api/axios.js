@@ -6,6 +6,7 @@ import axios from 'axios'
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || '',
   headers: { 'Content-Type': 'application/json' },
+  timeout: 20000, // 20s — Render free tier can take ~15s to cold start
 })
 
 api.interceptors.response.use(
