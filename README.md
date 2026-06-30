@@ -1,4 +1,4 @@
-# Xeno Mini CRM — Drape Fashion Label
+# Mini CRM — Drape Fashion Label
 
 ## Overview
 An AI-native Mini CRM for Drape, a D2C fashion brand. One sharp end-to-end flow:
